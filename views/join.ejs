@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <h1> 회원가입 페이지 </h1>
+    <label>가입</label>
+    <input type="text" id="id" value="" placeholder="아이디">
+    <input type="password" id="password" value="" placeholder="비번">
+    <button  id="button" type="submit">회원가입</button>
+
+    <script>
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const id = document.querySelector('#id')
+        const password = document.querySelector('#password')
+        const button = document.querySelector('#button')
+
+        const click = () => {
+          console.log('click')
+
+          if (!id.value || !password.value) {
+            alert('아이디 비번을 입력하시오!')
+          } else {
+            axios.post('/api/auth/register', {
+              username: id.value,
+              password: password.value
+            }).then((response) => {
+
+              const { data : result } = response;
+
+              if (result) {
+                alert('회원가입 성공')
+                document.location.href = '/'
+              } else {
+                alert('회원가입 실패!')
+              }
+            }).catch((error) => {
+              alert('뭔가 문제가 생겼다')
+            })
+          }
+        }
+
+        button.addEventListener('click', click)
+
+      })
+
+    </script>
+  </body>
+</html>

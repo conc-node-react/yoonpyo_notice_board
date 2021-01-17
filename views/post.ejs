@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <h1> 포스팅 </h1>
+    <h2 id="title"> <%= id  %> </h2>
+    ------------------
+    <p id="contents" > 내용 </p>
+    <br>
+    <a href="/list">목록</a>
+
+    <br>
+    <a href="/logout">로그아웃</a>
+    <script>   
+     const id = '<%= id  %>'
+      const load = function() {
+        const title = document.querySelector('#title')
+        const contents = document.querySelector('#contents')
+
+        axios.get(`/api/board/${id}`).then((response) => {
+            const { data : { board }} = response
+
+            title.innerText = board.title
+            contents.innerHTML = board.contents
+        }) 
+      } 
+
+      document.addEventListener('DOMContentLoaded', () => {
+
+        load()
+      })
+
+    </script>
+  </body>
+</html>

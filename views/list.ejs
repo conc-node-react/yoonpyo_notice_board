@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <h1> 게시판 </h1>
+
+    <table id="table">
+        <tr>
+            <th>제목</th>
+            <th>작성자 ID</th>
+            <th>보러가기</th>
+        </tr>
+    </table>
+
+    <button id="prev">이전 페이지</button>
+    <button id="next">다음 페이지</button>
+    <a href="/write">글쓰기</button>
+    <a href="/logout">로그아웃</a>
+ 
+    <script>   
+      const limit = 5;
+      let page = 1
+      let prev = false
+      let next = false
+
+      const load = function() {
+        const table = document.querySelector('#table')
+
+        axios.get(`/api/board?limit=${limit}&page=${page}`).then((response) => {
+
+        const { data : { hasPrevPage, hasNextPage, docs}} = response.data;
+
+        prev = hasPrevPage
+        next = hasNextPage
+
+        if (!hasPrevPage) this.prevDoc.setAttribute('disabled', 'disabled')
+        else this.prevDoc.removeAttribute('disabled')
+        
+        if (!hasNextPage)this.nextDoc.setAttribute('disabled', 'disabled')
+        else this.nextDoc.removeAttribute('disabled')
+
+        const items = table.querySelectorAll('.item')
+
+        for (const item of items) {
+            table.removeChild(item)
+        }
+
+        for (const doc of docs) {
+
+            const tr = document.createElement('tr')
+            const title = document.createElement('td')
+            const writer = document.createElement('td')
+            const buttonWrap = document.createElement('td')
+
+            // 버튼 생성
+            const go = document.createElement('button')
+            
+            go.innerText = '보러가기'
+            go.addEventListener('click', () => {
+                document.location.href = `/post/${doc._id}`
+            })
+
+            buttonWrap.appendChild(go)
+            tr.classList.add('item')
+            
+            title.innerText = doc.title
+            writer.innerText = doc.writer.username
+
+            tr.appendChild(title)
+            tr.appendChild(writer)
+            tr.appendChild(buttonWrap)
+            table.appendChild(tr)
+        }
+        }) 
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+
+         const prevDoc = document.querySelector('#prev')
+         const nextDoc = document.querySelector('#next')
+
+         load.call({prevDoc, nextDoc})
+
+
+         prevDoc.addEventListener('click', () => {
+             if (prev) {
+                 page -= 1
+                 load.call({prevDoc, nextDoc})
+             }
+         })
+
+         nextDoc.addEventListener('click', () => {
+             if (next) {
+                 page += 1
+                 load.call({prevDoc, nextDoc})
+             }
+         })
+      })
+
+    </script>
+  </body>
+</html>

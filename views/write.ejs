@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <h1> 글쓰기 </h1>
+    <input id="title" type="text" placeholder="title" value="">
+    <br>
+    <br>
+    <textarea name="contents" id="contents" cols="30" rows="10"></textarea>
+    <br>
+    <button id="write"> 글쓰기 </button>
+    <a href="/logout">로그아웃</a>
+
+    <script>   
+      const write = function() {
+        const title = document.querySelector('#title').value
+        const contents = document.querySelector('#contents').value
+
+        axios.post(`/api/board/write`, {
+          title,
+          contents
+        }).then((response) => {
+            const { data: {result, board} } = response
+
+            if (result) {
+              alert('글쓰기 성공')
+              document.location.href = `/post/${board._id}`
+            }
+        }).catch((e) => {
+          alert('글쓰기 실패')
+        }) 
+      } 
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const button = document.querySelector('#write')
+
+        button.addEventListener('click', write)
+
+      })
+
+    </script>
+  </body>
+</html>
